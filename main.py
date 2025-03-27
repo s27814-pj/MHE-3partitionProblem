@@ -30,15 +30,6 @@ def assign_index_to_values(values):
         list_of_units.append(Unit(values[i], int(i%(len(values)/3))))
     return list_of_units
 
-def exists_in_tabu(tabu_list, unit_list):
-    # Convert each unit list to a tuple of (value, index) for comparison
-    unit_tuple = tuple((unit.get_value(), unit.get_index()) for unit in unit_list)
-    for tabu in tabu_list:
-        # Convert each tabu list to a tuple of (value, index)
-        tabu_tuple = tuple((unit.get_value(), unit.get_index()) for unit in tabu)
-        if unit_tuple == tabu_tuple:
-            return True
-    return False
 
 
 def main():
@@ -102,18 +93,6 @@ def main():
             print('goal of tabu search:', goal(list_from_tabu_search),
                   ' counter:', counter_from_tabu_search,
                   '\nTabu Search\n', list_from_tabu_search)
-        case '0':
-            tabu_list =[]
-            print(tabu_list)
-            tabu_list.append(list_of_units)
-            print(tabu_list)
-            print(list_of_units)
-            list_from_random_solution, counter_from_random_solution = random_solution(list_of_units, 10000)
-            list_of_units=copy.deepcopy(list_from_random_solution)
-            print(list_of_units)
-            print(exists_in_tabu(tabu_list, list_of_units))
-            tabu_list.append(list_of_units)
-            print(exists_in_tabu(tabu_list, list_of_units))
 
 
 if __name__ == '__main__':
