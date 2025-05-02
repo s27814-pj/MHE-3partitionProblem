@@ -1,8 +1,8 @@
 import copy
 import random
 
-from generate_neighbours import generate_neighbours
-from goal import goal
+from generate_neighbours import generate_neighbours, generate_neighbours2
+from goal import goal, goal2
 
 
 def hill_climbing(list_of_units, random_start=False):
@@ -54,6 +54,7 @@ def hill_climbing_random_neighbour(list_of_units, random_start=False, max_iterat
         for neighbour in list_of_neighbours:
             counter+=1
             if goal(neighbour) > goal(best_neighbour):
+                #losowo pojeduynczy sasiad
                 best_neighbour=copy.deepcopy(neighbour)
             elif (goal(neighbour) == goal(best_neighbour) and
                   random.randint(0, len(list_of_units)) >=counter%len(list_of_units)):
@@ -68,3 +69,48 @@ def hill_climbing_random_neighbour(list_of_units, random_start=False, max_iterat
             better_neighbour = False
         if goal(current_list) == len(list_of_units)/3: better_neighbour=False
     return current_list, counter
+
+
+def hill_climbing_random_neighbour2(values, index, random_start=False, max_iterations=1000):
+
+    current_index = index.copy()
+    if random_start:
+        list_of_indexes_available = []
+        for i in range(len(values)):
+            list_of_indexes_available.append(int(i % (len(values) / 3)))
+        random.shuffle(list_of_indexes_available)
+        for j in range(len(list_of_indexes_available)):
+            current_index=list_of_indexes_available.copy()
+    # print(current_index)
+    counter=0
+    # best_neighbour=current_index.copy()
+    # print(list_of_neighbours)
+    while (counter < max_iterations):
+        list_of_neighbours = generate_neighbours2(current_index)
+        counter+=1
+        rand=random.randint(0,len(list_of_neighbours)-1)
+        # print(rand)
+        if goal2(values,list_of_neighbours[rand]) >= goal2(values,current_index):
+            current_index=list_of_neighbours[rand].copy()
+            # print(current_index, len(list_of_neighbours))
+        if goal2(values,current_index) == len(current_index) / 3: break
+
+    return current_index, counter
+
+def hill_climbing2(values, index, random_start=False):
+    counter = 0
+    current_index = index.copy()
+    best_neighbour = index.copy()
+    better_neighbour = True
+    while better_neighbour:
+        list_of_neighbours = generate_neighbours2(current_index)
+        for neighbour in list_of_neighbours:
+            counter += 1
+            if goal2(values,neighbour) > goal2(values,best_neighbour):
+                best_neighbour = neighbour.copy()
+        if goal2(values,best_neighbour) > goal2(values, current_index):
+            current_index = best_neighbour.copy()
+        else:
+            better_neighbour = False
+
+    return current_index, counter

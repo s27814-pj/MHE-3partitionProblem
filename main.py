@@ -3,13 +3,14 @@ import copy
 import random
 from collections import Counter
 
+from annealing import annealing
 from full_solution import full_solution
-from hill_climbing import hill_climbing, hill_climbing_random_neighbour
+from hill_climbing import hill_climbing, hill_climbing_random_neighbour, hill_climbing_random_neighbour2, hill_climbing2
 from random_solution import random_solution
 from tabu_search import tabu_search
 from unit import Unit
-from goal import goal
-from generate_neighbours import generate_neighbours
+from goal import goal, goal2
+from generate_neighbours import generate_neighbours, generate_neighbours2
 
 def read_from_file():
     with open('inputData.txt', 'r') as file:
@@ -30,9 +31,38 @@ def assign_index_to_values(values):
         list_of_units.append(Unit(values[i], int(i%(len(values)/3))))
     return list_of_units
 
-
-
 def main():
+    # if len(sys.argv) < 2:
+    #     exit()
+    values = read_from_file()
+    values = fix_values_to_triplets(values)
+    values = [int(value) for value in values]
+    list_of_indexes= []
+    for i in range(len(values)):
+        list_of_indexes.append( int(i%(len(values)/3)))
+    print(goal2(values,list_of_indexes))
+
+    end_index, counter = hill_climbing_random_neighbour2(values,list_of_indexes)
+    print(end_index, counter)
+    print(goal2(values,end_index))
+
+    end_index, counter = hill_climbing2(values, list_of_indexes)
+    print(end_index, counter)
+    print(goal2(values, end_index))
+
+
+    end_index, counter = tabu_search(values, list_of_indexes)
+    print(end_index, counter)
+    print(goal2(values, end_index))
+    # if sys.argv[1] == '--random':
+    #     print(sys.argv[1])
+
+    end_index=annealing(values, list_of_indexes)
+    print(end_index)
+    print(goal2(values, end_index))
+
+
+def mainold():
     if len(sys.argv) < 2:
         print("No arguments given, will use inputData.txt")
         values = read_from_file()
