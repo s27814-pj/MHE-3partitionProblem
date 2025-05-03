@@ -25,19 +25,15 @@ def crossover(parent1,parent2):
     child=parent1.copy()
     for i in range(1):
         inherited_index=random.randint(0, int(len(parent1)/3)-1)
-        # print(inherited_index)
         positions_in_parent=[]
         for ii in range(len(parent2)):
             if parent2[ii] == inherited_index: positions_in_parent.append(ii)
-        # print('liczba pozycji',len(positions_in_parent))
         for p in positions_in_parent:
             if child[p]==inherited_index :continue
             stack.append(child[p])
             child[p]=inherited_index
-        # print('liczba na stacku', len(stack))
         for j in range(len(child)):
             if j in positions_in_parent: continue
-            # print('j=',j,'pos in parent',positions_in_parent, len(child))
             if child[j]==inherited_index: child[j]=int(stack.pop())
             # print(sum(child))
     return child
@@ -54,17 +50,14 @@ def crossover2(parent1, parent2, n=4):
                 child[j]=tmp
                 break
 
-    # print(sum(child))
     return child
 
 def mutate(individual, mutation_rate=0.1):
     if random.random() > mutation_rate: return individual
     stack = []
     child=individual.copy()
-    # print('got chidl', child)
     mutated_index = random.randint(0, int(len(child) / 3) - 1)
     mutated_index_new=random.randint(0, int(len(child) / 3) - 1)
-    # print("mutanci",mutated_index,mutated_index_new)
     mutated_positions = []
     for i in range(len(child)):
         if child[i]==mutated_index : mutated_positions.append(i)
@@ -74,9 +67,6 @@ def mutate(individual, mutation_rate=0.1):
         child[p]=mutated_index_new
     for i in range(len(child)):
         if i in mutated_positions: continue
-        # print(len(stack))
-        # print(mutated_positions, i)
-        # print(child)
         if child[i]==mutated_index_new: child[i]=int(stack.pop())
     return child
 
@@ -97,54 +87,32 @@ def mutate2(individual, mutation_rate=0.01):
 
 
 def genetic_algorithm(values, index, population_size=700, generations=40):
-    # term_condition, fitness, selection, crossover, mutation
     population = init_pop(index,population_size)
     population_fitness = []
     for p in population:
         population_fitness.append(goal3(values,p))
-        # print(p, goal2(values, p))
-    # best_individual = heapq.nlargest(1, list(zip(population, population_fitness)), key=lambda x: x[1])
-    # best_individual = max(list(zip(population, population_fitness)), key=lambda x: x[1])
-    best_individual = max(list(zip(population, population_fitness)), key=lambda x: x[1])[0]
-    best_individual_score=goal2(values,best_individual)
-    # print(best_individual, goal2(values,best_individual))
-    # best_individual_index = [x[0] for x in best_individual]
-    # best_individual_fitness = [x[1] for x in best_individual]
-    # print(best_individual_index,best_individual_fitness)
 
-    # parent1 = tournament_selection(population, population_fitness)
-    # print("P1",parent1)
-    # parent2 = tournament_selection(population, population_fitness)
-    # print("P2",parent2)
-    # child = crossover(parent1, parent2)
-    # print("C1",child)
-    # child = mutate(child,2)
-    # print("muta", child)
+    best_individual = max(list(zip(population, population_fitness)), key=lambda x: x[1])[0]
 
     for gen in range(generations):
-        # print(gen)
         new_population = []
         new_population_fitness=[]
         for _ in range(population_size):
-            # Selection
             parent1 = tournament_selection(population, population_fitness)
-            # print(parent1)
             parent2 = tournament_selection(population, population_fitness)
-            # Crossover
+
             child = crossover2(parent1, parent2)
-            # print(child , sum(child))
-            # Mutation
-            # print('here', parent2, parent1, child)
             child = mutate2(child)
-            # print(child , sum(child))
+
             new_population.append(child)
-            # print(gen)
+
         for p in new_population:
             new_population_fitness.append(goal3(values, p))
 
         best_individual_new_population = max(list(zip(new_population, new_population_fitness)), key=lambda x: x[1])[0]
         if goal3(values,best_individual_new_population)>goal3(values,best_individual):best_individual=best_individual_new_population
-        print('best score', goal3(values,best_individual_new_population),'in generation ', gen, best_individual_new_population)
+        # print('best score', goal3(values,best_individual_new_population),'in generation ', gen, best_individual_new_population)
+        if goal3(values,best_individual)>=0: return best_individual, gen
         population = new_population
 
-    return best_individual
+    return best_individual, generations

@@ -45,48 +45,38 @@ def sum_by_index(values, indices):
 
 
 def main():
-    # if len(sys.argv) < 2:
-    #     exit()
+    if len(sys.argv) < 2:
+        exit()
     values = read_from_file()
     values = fix_values_to_triplets(values)
     values = [int(value) for value in values]
     list_of_indexes= []
     for i in range(len(values)):
         list_of_indexes.append( int(i%(len(values)/3)))
-    print(goal2(values,list_of_indexes))
 
+    if sys.argv[1] == '-hcr':
+        end_index, counter = hill_climbing_random_neighbour2(values, list_of_indexes)
+        info="hill climbing random neighbour, goal by most common sum"
+    elif sys.argv[1] == '-hc':
+        end_index, counter = hill_climbing2(values, list_of_indexes)
+        info="hill climbing , goal by most common sum"
+    elif sys.argv[1] == '-tabu':
+        end_index, counter = tabu_search(values, list_of_indexes, 1000,100,True,True)
+        info="tabu search, goal by most common sum"
+    elif sys.argv[1] == '-anneal':
+        end_index, counter = annealing(values, list_of_indexes)
+        info="simulated annealing , goal by most common sum"
+    elif sys.argv[1] == '-ga':
+        end_index, counter = genetic_algorithm(values, list_of_indexes)
+        info="genetic algorithm , goal by lowest variance of sums"
+    else: exit()
 
-    # neigh=generate_neighbours2(list_of_indexes)
-    # for n in neigh:
-    #     result = sum_by_index(values, n)
-    #     print(result)
-    #     print(goal3(values,n))
-    a=genetic_algorithm(values,list_of_indexes)
-    print(goal3(values,a))
-    print(sum_by_index(values,a))
-
-    # end_index, counter = hill_climbing_random_neighbour2(values,list_of_indexes)
-    # print(end_index, counter)
-    # print(goal2(values,end_index))
-    #
-    # end_index, counter = hill_climbing2(values, list_of_indexes)
-    # print(end_index, counter)
-    # print(goal2(values, end_index))
-    #
-    #
-    # end_index, counter = tabu_search(values, list_of_indexes)
-    # print(end_index, counter)
-    # print(goal2(values, end_index))
-    # # if sys.argv[1] == '--random':
-    # #     print(sys.argv[1])
-    #
-    # end_index=annealing(values, list_of_indexes)
-    # print(end_index)
-    # print(goal2(values, end_index))
-    # test = generate_neighbours2(list_of_indexes)
-    # for e in test:
-    #     print(e)
-    #     print(goal2(values,e))
+    print('\n',info)
+    print("\nbest index = ", end_index)
+    print("\nlist of sums =", sum_by_index(values, end_index))
+    print("\ngoal by most common sum=", goal2(values,end_index),
+          "goal by lowest variance=",goal3(values,end_index),
+          "counter =",counter,"\n")
 
 def mainold():
     if len(sys.argv) < 2:

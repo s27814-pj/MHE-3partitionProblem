@@ -3,6 +3,7 @@ import random
 
 from generate_neighbours import generate_neighbours2
 from goal import goal2
+# from goal import goal3 as goal2
 
 def temperature(i):
     return 1000.0/i
@@ -15,11 +16,6 @@ def annealing(values,index, steps=1000):
         rand = random.randint(0, len(list_of_neighbours) - 1)
         if goal2(values, list_of_neighbours[rand]) >= goal2(values, current_index):
             current_index=list_of_neighbours[rand].copy()
-            # print(list_of_neighbours)
-        # else:
-        #     # print(random.random(), math.exp(-abs(goal2(values,current_index) - goal2(values,list_of_neighbours[rand])) / temperature(i)))
-        #     if random.random() < math.exp(-abs(goal2(values,current_index) - goal2(values,list_of_neighbours[rand])) / temperature(i)):
-        #         current_index = list_of_neighbours[rand].copy()
         solutions.append(current_index)
 
     best_solution=solutions[0]
@@ -27,4 +23,4 @@ def annealing(values,index, steps=1000):
         if goal2(values,s) > goal2(values,best_solution):
             best_solution = s.copy()
 
-    return best_solution
+    return best_solution, steps

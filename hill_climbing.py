@@ -3,6 +3,7 @@ import random
 
 from generate_neighbours import generate_neighbours, generate_neighbours2
 from goal import goal, goal2
+# from goal import goal3 as goal2
 
 
 def hill_climbing(list_of_units, random_start=False):
