@@ -3,13 +3,14 @@ import copy
 import random
 from collections import Counter
 
-from annealing import annealing
+from genetic_alghoritm import genetic_algorithm
+from sim_annealing import annealing
 from full_solution import full_solution
 from hill_climbing import hill_climbing, hill_climbing_random_neighbour, hill_climbing_random_neighbour2, hill_climbing2
 from random_solution import random_solution
 from tabu_search import tabu_search
 from unit import Unit
-from goal import goal, goal2
+from goal import goal, goal2, goal3
 from generate_neighbours import generate_neighbours, generate_neighbours2
 
 def read_from_file():
@@ -31,6 +32,18 @@ def assign_index_to_values(values):
         list_of_units.append(Unit(values[i], int(i%(len(values)/3))))
     return list_of_units
 
+
+def sum_by_index(values, indices):
+    index_sums = {}
+    for value, index in zip(values, indices):
+        if index in index_sums:
+            index_sums[index] += value
+        else:
+            index_sums[index] = value
+    return list(index_sums.values())
+
+
+
 def main():
     # if len(sys.argv) < 2:
     #     exit()
@@ -42,25 +55,38 @@ def main():
         list_of_indexes.append( int(i%(len(values)/3)))
     print(goal2(values,list_of_indexes))
 
-    end_index, counter = hill_climbing_random_neighbour2(values,list_of_indexes)
-    print(end_index, counter)
-    print(goal2(values,end_index))
 
-    end_index, counter = hill_climbing2(values, list_of_indexes)
-    print(end_index, counter)
-    print(goal2(values, end_index))
+    # neigh=generate_neighbours2(list_of_indexes)
+    # for n in neigh:
+    #     result = sum_by_index(values, n)
+    #     print(result)
+    #     print(goal3(values,n))
+    a=genetic_algorithm(values,list_of_indexes)
+    print(goal3(values,a))
+    print(sum_by_index(values,a))
 
-
-    end_index, counter = tabu_search(values, list_of_indexes)
-    print(end_index, counter)
-    print(goal2(values, end_index))
-    # if sys.argv[1] == '--random':
-    #     print(sys.argv[1])
-
-    end_index=annealing(values, list_of_indexes)
-    print(end_index)
-    print(goal2(values, end_index))
-
+    # end_index, counter = hill_climbing_random_neighbour2(values,list_of_indexes)
+    # print(end_index, counter)
+    # print(goal2(values,end_index))
+    #
+    # end_index, counter = hill_climbing2(values, list_of_indexes)
+    # print(end_index, counter)
+    # print(goal2(values, end_index))
+    #
+    #
+    # end_index, counter = tabu_search(values, list_of_indexes)
+    # print(end_index, counter)
+    # print(goal2(values, end_index))
+    # # if sys.argv[1] == '--random':
+    # #     print(sys.argv[1])
+    #
+    # end_index=annealing(values, list_of_indexes)
+    # print(end_index)
+    # print(goal2(values, end_index))
+    # test = generate_neighbours2(list_of_indexes)
+    # for e in test:
+    #     print(e)
+    #     print(goal2(values,e))
 
 def mainold():
     if len(sys.argv) < 2:
