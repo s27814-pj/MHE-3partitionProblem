@@ -82,18 +82,13 @@ def hill_climbing_random_neighbour2(values, index, random_start=False, max_itera
         random.shuffle(list_of_indexes_available)
         for j in range(len(list_of_indexes_available)):
             current_index=list_of_indexes_available.copy()
-    # print(current_index)
     counter=0
-    # best_neighbour=current_index.copy()
-    # print(list_of_neighbours)
     while (counter < max_iterations):
         list_of_neighbours = generate_neighbours2(current_index)
         counter+=1
         rand=random.randint(0,len(list_of_neighbours)-1)
-        # print(rand)
         if goal2(values,list_of_neighbours[rand]) >= goal2(values,current_index):
             current_index=list_of_neighbours[rand].copy()
-            # print(current_index, len(list_of_neighbours))
         if goal2(values,current_index) == len(current_index) / 3: break
 
     return current_index, counter

@@ -1,5 +1,6 @@
 import random
 import heapq
+import statistics
 
 from goal import goal2, goal3
 
@@ -20,10 +21,10 @@ def crossover(parent1,parent2):
     #na parenta 1 nałóź wybrane zbiory parenta2, zapisz pozycje gdzie wkładasz, na stos wrzuc zamieniona wartosc,
     # na koniec przejrzyj childa z pominieciem pozycji zamian, jezeli index z tej grupy co przejal to ze
     # zastap wartoscia ze stosu - chyba ze ta sama wartosc pomin
-
+    random_parts = random.randint(0, int((len(parent1) / 3) * 0.7))
     stack=[]
     child=parent1.copy()
-    for i in range(1):
+    for i in range(random_parts):
         inherited_index=random.randint(0, int(len(parent1)/3)-1)
         positions_in_parent=[]
         for ii in range(len(parent2)):
@@ -49,8 +50,36 @@ def crossover2(parent1, parent2, n=4):
             if child[j]==parent2[i]:
                 child[j]=tmp
                 break
-
+    # print(sum(child))
     return child
+
+def crossover3(parent1, parent2, n=4):
+#     na parenta1 nalozyc pierwszy element parenta2, przeszykac dalej i zmienc wartosc pierwszo wystapeinia ++dalej
+    rand_start=random.randint(0,len(parent1)-1)
+    rand_end=random.randint(0,len(parent1)-1)
+    if rand_start > rand_end:
+        rand_start, rand_end = rand_end, rand_start
+    child=parent1.copy()
+    for i in range(rand_start, rand_end):
+        tmp=child[i]
+        child[i]=parent2[i]
+        found= False
+        for j in range(0, i):
+            if child[j]==parent2[i]:
+                child[j]=tmp
+                found=True
+                break
+        if not found:
+            for j in range(i+1, len(child)):
+                if child[j] == parent2[i]:
+                    child[j] = tmp
+                    found = True
+                    break
+
+    # print(sum(child))
+    return child
+
+
 
 def mutate(individual, mutation_rate=0.1):
     if random.random() > mutation_rate: return individual
@@ -101,7 +130,7 @@ def genetic_algorithm(values, index, population_size=700, generations=40):
             parent1 = tournament_selection(population, population_fitness)
             parent2 = tournament_selection(population, population_fitness)
 
-            child = crossover2(parent1, parent2)
+            child = crossover3(parent1, parent2)
             child = mutate2(child)
 
             new_population.append(child)
@@ -111,7 +140,7 @@ def genetic_algorithm(values, index, population_size=700, generations=40):
 
         best_individual_new_population = max(list(zip(new_population, new_population_fitness)), key=lambda x: x[1])[0]
         if goal3(values,best_individual_new_population)>goal3(values,best_individual):best_individual=best_individual_new_population
-        # print('best score', goal3(values,best_individual_new_population),'in generation ', gen, best_individual_new_population)
+        # print('best score', goal3(values,best_individual_new_population),'in generation ', gen, best_individual_new_population, 'variance(*-1) among generation', statistics.variance(new_population_fitness)*(-1))
         if goal3(values,best_individual)>=0: return best_individual, gen
         population = new_population
 
